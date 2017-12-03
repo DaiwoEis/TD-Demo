@@ -1,0 +1,8 @@
+﻿{
+  "LanguageName": "English",
+  "LanguageTextDic":
+  {
+	  "startgame" : "StartGame",
+	  "quitgame" : "QuitGame"
+  }
+}

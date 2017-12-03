@@ -1,0 +1,17 @@
+[GameObject]
+rocket:Prefabs/rocket
+Soldier:Prefabs/Soldier
+Tank:Prefabs/Tank
+
+[Texture2D]
+
+[AudioClip]
+
+[ScriptableObject]
+EnemySpawnerData1:ScriptableObjects/Enemy/EnemySpawnerDatas/EnemySpawnerData1
+
+[TextAsset]
+Chineses:TextAssets/Chineses
+English:TextAssets/English
+LocalizationSetting:TextAssets/LocalizationSetting
+
