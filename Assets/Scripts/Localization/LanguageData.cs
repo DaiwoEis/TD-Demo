@@ -9,4 +9,9 @@ public class LanguageData
 
     [ShowInInspector]
     public Dictionary<string, string> LanguageTextDic;
+
+    public string this[string key]
+    {
+        get { return LanguageTextDic[key]; }
+    }
 }

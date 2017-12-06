@@ -1,17 +1,30 @@
 [GameObject]
-rocket:Prefabs/rocket
-Soldier:Prefabs/Soldier
-Tank:Prefabs/Tank
+Rocket:Prefabs/Bullet/Rocket
+DefenderMachineGun:Prefabs/Defender/DefenderMachineGun
+DefenderRocket:Prefabs/Defender/DefenderRocket
+Soldier:Prefabs/Enemy/Soldier
+Tank:Prefabs/Enemy/Tank
+Btn_Language:Prefabs/UI/Control/Btn_Language
+UIWindow_GameInit:Prefabs/UI/UIWindow/UIWindow_GameInit
+UIWindow_GameMain:Prefabs/UI/UIWindow/UIWindow_GameMain
+UIWindow_GamePaused:Prefabs/UI/UIWindow/UIWindow_GamePaused
 
 [Texture2D]
 
 [AudioClip]
 
 [ScriptableObject]
-EnemySpawnerData1:ScriptableObjects/Enemy/EnemySpawnerDatas/EnemySpawnerData1
+DefenderMachineGunData:ScriptableObjects/ConfigData/Denfender/DefenderMachineGunData
+DefenderRocketData:ScriptableObjects/ConfigData/Denfender/DefenderRocketData
+EnemySpawnerData1:ScriptableObjects/ConfigData/Enemy/EnemySpawnerData1
+SoldierData:ScriptableObjects/ConfigData/Enemy/SoldierData
+TankData:ScriptableObjects/ConfigData/Enemy/TankData
+Active:ScriptableObjects/UI/Switcher/Active
+GameRunningTree:ScriptableObjects/UI/WindowTree/GameRunningTree
 
 [TextAsset]
-Chineses:TextAssets/Chineses
-English:TextAssets/English
-LocalizationSetting:TextAssets/LocalizationSetting
+Chineses:TextAssets/Localization/Chineses
+English:TextAssets/Localization/English
+LocalizationSetting:TextAssets/Localization/LocalizationSetting
+GameMain:TextAssets/UIManager/GameMain
 

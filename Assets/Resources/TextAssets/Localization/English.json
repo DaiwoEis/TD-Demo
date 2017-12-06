@@ -1,0 +1,14 @@
+{
+  "LanguageName": "English",
+  "LanguageTextDic": {
+    "Restart": "Restart",
+    "Exit": "Exit",
+    "RocketDefender": "RocketDefender",
+    "MachineGunDefender": "MachineGunDefender",
+    "Up": "Up",
+    "Sale": "Sale",
+    "Gold": "Gold",
+    "CanIntrude": "Intrude",
+    "ReStart": "ReStart"
+  }
+}

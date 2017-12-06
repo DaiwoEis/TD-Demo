@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
@@ -10,7 +11,11 @@ public class LocalizationManager : MonoSingleton<LocalizationManager>
     [ShowInInspector]
     private Dictionary<string, LanguageData> _langeDatas;
 
+    private LanguageData _currLanguageData;
+
     private const string SettingName = "LocalizationSetting";
+
+    public event Action<string> OnLanaguageChanged; 
 
     protected override void OnCreate()
     {
@@ -23,11 +28,45 @@ public class LocalizationManager : MonoSingleton<LocalizationManager>
             LanguageData data = JsonConvert.DeserializeObject<LanguageData>(ResourceManager.Load<TextAsset>(resourcesName).text);
             _langeDatas.Add(data.LanguageName, data);
         }
+
+        if (_langeDatas.Count > 0)
+            _currLanguageData = _langeDatas.Values.ToArray()[0];
     }
 
     public string[] GetAllLanguages()
     {
         return _langeDatas.Keys.ToArray();
+    }
+
+    public void SetLanguage(string languageName)
+    {
+        if (!_langeDatas.ContainsKey(languageName))
+        {
+            Debug.LogWarning(string.Format("Don't contain lanaguage {0} data.", languageName));
+            return;
+        }
+
+        _currLanguageData = _langeDatas[languageName];
+        UpdateContents();
+    }
+
+    public string GetContent(string key)
+    {
+        if (_currLanguageData != null)
+            return _currLanguageData[key];
+
+        return null;
+    }
+
+    private void UpdateContents()
+    {
+        if (OnLanaguageChanged != null)
+            OnLanaguageChanged(_currLanguageData.LanguageName);
+    }
+
+    private void ClearEvent()
+    {
+        OnLanaguageChanged = null;
     }
 
     public class LocalizationSetting

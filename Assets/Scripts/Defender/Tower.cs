@@ -7,17 +7,19 @@ public class Tower : MonoBehaviour
 
     public bool CanBuy(string defenderName)
     {        
-        GameObject targetObject = Resources.Load<GameObject>("Defenders/" + defenderName);    
-        int price = targetObject.GetComponent<DefenderStatus>().buyPrice[0];
+        var configData = ResourceManager.Load<DefenderConfigData>(defenderName + "Data");    
+        int price = configData.BuyPrices[1];
 
         return GameController.Instance.GetGold() > price;
     }
 
     public void BuyDefender(string defenderName)
     {
-        GameObject targetObject = Resources.Load<GameObject>("Defenders/" + defenderName);
-        int price = targetObject.GetComponent<DefenderStatus>().buyPrice[0];
-        currDefender = Instantiate(targetObject, transform.position, Quaternion.identity).GetComponent<DefenderBase>();
+        var configData = ResourceManager.Load<DefenderConfigData>(defenderName + "Data");
+        int price = configData.BuyPrices[1];
+
+        GameObject prefab = ResourceManager.Load<GameObject>(defenderName);
+        currDefender = Instantiate(prefab, transform.position, Quaternion.identity).GetComponent<DefenderBase>();
         currDefender.transform.SetParent(transform);
 
         GameController.Instance.ChangeGold(-price);

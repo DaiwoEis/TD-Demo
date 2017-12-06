@@ -5,32 +5,40 @@ public class Enemy : MonoBehaviour
 {
     public Transform wayLine;
 
-    private Vector3[] wayPoints;
+    private Vector3[] _wayPoints;
 
-    private int index;
-    public float moveSpeed = 10;
+    private int _index;
+
+    public float MoveSpeed = 10;
 
     private ParticleSystem particleSys;
 
-    public int giveGold = 50;
+    public int GiveGold = 50;
+
     public float HP = 200;
+
+    public string ConfigDataName;
+
+    private EnemyConfigData _configData;
 
     public event Action<Enemy> OnEnemyDead;
     public event Action<Enemy> OnMoveEnd; 
 
     private void Awake()
     {
+        _configData = ResourceManager.Load<ScriptableObject>(ConfigDataName) as EnemyConfigData;
+
         CalculateWayPoint();
 
         particleSys = GetComponentInChildren<ParticleSystem>();
 
-        GetComponent<PooledObject>().OnRetrieveFromPool += o => { StartGame(); };
+        GetComponent<PooledObject>().OnRetrieveFromPool += o => { ResetData(); };
     }
 
-    private void StartGame()
+    private void ResetData()
     {
-        HP = 200;
-        index = 0;
+        _index = 0;
+        SetUpConfigData();
         LookAtFirstWayPoint();
     }
 
@@ -41,30 +49,37 @@ public class Enemy : MonoBehaviour
         Movement();
     }
 
+    private void SetUpConfigData()
+    {
+        HP = _configData.BaseHP;
+        MoveSpeed = _configData.BaseMoveSpeed;
+        GiveGold = _configData.GiveGlod;
+    }
+
     public void LookAtFirstWayPoint()
     {
-        if (wayPoints.Length < 0) return;
+        if (_wayPoints.Length < 0) return;
 
-        LookAt(wayPoints[0]);
+        LookAt(_wayPoints[0]);
     }
 
     private void CalculateWayPoint()
     { 
-        wayPoints = new Vector3[wayLine.childCount];
+        _wayPoints = new Vector3[wayLine.childCount];
         for (int i = 0; i < wayLine.childCount; i++)
-            wayPoints[i] = wayLine.GetChild(i).position;
+            _wayPoints[i] = wayLine.GetChild(i).position;
     }
 
     public void Movement()
     {
-        transform.position = Vector3.MoveTowards(transform.position, wayPoints[index], moveSpeed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, _wayPoints[_index], MoveSpeed * Time.deltaTime);
     
-        if (Vector3.Distance(wayPoints[index], transform.position) < 0.1f)
+        if (Vector3.Distance(_wayPoints[_index], transform.position) < 0.1f)
         {
-            index += 1;
+            _index += 1;
             if (!MoveEnd())
             {
-                LookAt(wayPoints[index]);
+                LookAt(_wayPoints[_index]);
             }
             else
             {
@@ -79,7 +94,7 @@ public class Enemy : MonoBehaviour
 
     public bool MoveEnd()
     {
-        return index == wayPoints.Length;
+        return _index == _wayPoints.Length;
     }
 
     private void LookAt(Vector3 target)
@@ -104,7 +119,7 @@ public class Enemy : MonoBehaviour
             GetComponentInChildren<Animation>().Play("die");
         }
 
-        GameController.Instance.ChangeGold(giveGold);
+        GameController.Instance.ChangeGold(GiveGold);
         GameController.Instance.AddKilled();
 
         EntityManager.Instance.DestroyGO(gameObject, 3f);

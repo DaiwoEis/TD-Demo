@@ -1,0 +1,8 @@
+{
+	"DefaultSwitcherName" : "Active",
+	"WindowSwitcherMap" : {
+		"UIWindow_GameMain" : "Active",
+		"UIWindow_GamePaused" : "Active",
+		"UIWindow_GameInit" : "Active"
+	}
+}

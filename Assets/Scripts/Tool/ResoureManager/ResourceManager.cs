@@ -12,8 +12,14 @@ public class ResourceManager
 
     public static T Load<T>(string resourceName) where T : Object
     {
-        string typeName = FileHelper.RemoveNameSpace(typeof(T).ToString());
-        if (!_map.ContainsKey(typeName))
+        string typeName;
+
+        if (typeof(T).IsSubclassOf(typeof(ScriptableObject)))
+            typeName = FileHelper.RemoveNameSpace(typeof(ScriptableObject).ToString());
+        else
+            typeName = FileHelper.RemoveNameSpace(typeof(T).ToString());
+
+        if (!_map.ContainsKey(typeName) && !typeof(T).IsSubclassOf(typeof(ScriptableObject)))
         {
             Debug.Log(string.Format("Type {0} donest has path data.", typeName));
             return null;

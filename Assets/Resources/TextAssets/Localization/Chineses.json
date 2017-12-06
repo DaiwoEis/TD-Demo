@@ -1,0 +1,13 @@
+﻿{
+  "LanguageName": "中文",
+  "LanguageTextDic": {
+    "RocketDefender": "火箭兵",
+    "MachineGunDefender": "机枪兵",
+    "Up": "升级",
+    "Sale": "出售",
+    "Gold": "金币",
+    "CanIntrude": "闯入者",
+    "Exit": "退出游戏",
+    "ReStart": "重新开始"
+  }
+}

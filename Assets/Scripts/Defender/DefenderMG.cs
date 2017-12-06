@@ -4,6 +4,6 @@
     {
         base.Firing();
 
-        target.GetComponent<Enemy>().Damage(status.atk);
+        target.GetComponent<Enemy>().Damage(_currAtk);
     }
 }
