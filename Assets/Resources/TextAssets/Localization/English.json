@@ -1,14 +1,23 @@
-{
+﻿{
   "LanguageName": "English",
   "LanguageTextDic": {
     "Restart": "Restart",
     "Exit": "Exit",
-    "RocketDefender": "RocketDefender",
-    "MachineGunDefender": "MachineGunDefender",
+    "RocketDefender": "Rokcket",
+    "MachineGunDefender": "MG",
     "Up": "Up",
     "Sale": "Sale",
     "Gold": "Gold",
     "CanIntrude": "Intrude",
-    "ReStart": "ReStart"
+    "ReStart": "ReStart",
+    "GameSucceed": "Game Succeed!",
+    "GameFailure": "Game Failure!",
+    "Language": "Language",
+    "Setting": "Setting",
+    "MainMenu": "MainMenu",
+    "About": "About",
+    "SelectLevel": "SelectLevel",
+    "AboutContent": "This game in made by ChenXi.",
+    "Back": "Back"
   }
 }

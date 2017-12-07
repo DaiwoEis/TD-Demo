@@ -12,11 +12,14 @@ public class Rocket : MonoBehaviour
 
     public int atk;
 
+    public string explodeFXPrefabName;
+
     public GameObject explodeFx;
 
     private void Awake()
     {
         GetComponent<PooledObject>().OnReturnToPool += o => { attackTarget = null; };
+        explodeFx = ResourceManager.Load<GameObject>(explodeFXPrefabName);
     }
 
     private void Update()

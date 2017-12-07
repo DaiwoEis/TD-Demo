@@ -1,0 +1,8 @@
+{
+	"DefaultSwitcherName" : "Active",
+	"WindowSwitcherMap" : {
+		"UIWindow_MainMenu" : "Active",
+		"UIWindow_Setting" : "Fade",
+		"UIWindow_About" : "Fade"
+	}
+}

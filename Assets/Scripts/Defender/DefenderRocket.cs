@@ -4,7 +4,7 @@ using System.Collections;
 public class DefenderRocket : DefenderBase
 {       
     public Transform shootPos;
-      
+
     protected override void Firing()
     {
         base.Firing();

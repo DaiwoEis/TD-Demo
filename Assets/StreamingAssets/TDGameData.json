@@ -1,0 +1,11 @@
+﻿{
+  "SoundSetting": {
+	  "bgVolume": "1",
+	  "fxVolume": "1",
+	  "speakVolume": "1"
+  },
+
+  "LanguageSetting": {
+	  "languageName": "中文"
+  }
+}

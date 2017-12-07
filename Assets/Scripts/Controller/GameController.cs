@@ -29,8 +29,6 @@ public class GameController : MonoSingleton<GameController>
     [SerializeField]
     private int enemyTotal;
 
-    public event Action<bool> OnGamePaused;
-
     public event Action OnGameStart;
 
     private EnemySpawner _spawner;
@@ -96,17 +94,7 @@ public class GameController : MonoSingleton<GameController>
 
     public void ShutDown()
     {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
-    }
-
-    public void TriggerGamePaused(bool paused)
-    {
-        if (OnGamePaused != null)
-            OnGamePaused(paused);
+        GameManager.Instance.QuitGame();
     }
 
     public void TriggerGameStart()
@@ -133,7 +121,7 @@ public class GameController : MonoSingleton<GameController>
         {
             base.Enter();
 
-            Instance.Invoke(5f, () => _fsm.ChangeState(GameStateType.GameRunning));
+            Instance.Invoke(2f, () => _fsm.ChangeState(GameStateType.GameRunning));
             UIManager.Instance.SetConfigData(JsonConvert.DeserializeObject<UIManagerConfigData>(ResourceManager.Load<TextAsset>("GameMain").text));
             UIManager.Instance.FindWindowInScene();
             UIManager.Instance.OpenWindow<UIWindow_GameMain>();
@@ -179,6 +167,10 @@ public class GameController : MonoSingleton<GameController>
             {
                 _fsm.ChangeState(GameStateType.GameFailure);
             }
+            else if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                _fsm.ChangeState(GameStateType.GamePaused);
+            }
         }
     }
 
@@ -194,8 +186,17 @@ public class GameController : MonoSingleton<GameController>
 
             Time.timeScale = 0f;
 
-            Instance.TriggerGamePaused(true);
             UIManager.Instance.OpenWindow<UIWindow_GamePaused>();
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                _fsm.ChangeState(GameStateType.GameRunning);
+            }
         }
 
         public override void Exit()
@@ -204,7 +205,6 @@ public class GameController : MonoSingleton<GameController>
 
             Time.timeScale = 1f;
 
-            Instance.TriggerGamePaused(false);
             UIManager.Instance.CloseWindow<UIWindow_GamePaused>();
         }
     }

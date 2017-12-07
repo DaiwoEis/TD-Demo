@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "ConfigData/Defender/DefenderData")]
-public class DefenderConfigData : ConfigData 
+public class DefenderConfigData : ConfigData
 {
     public int Atk = 50;
 
@@ -25,4 +25,16 @@ public class DefenderConfigData : ConfigData
     public DefenderAnimationName AnimName;
 
     public float FireTime = 0f;
+
+    public string ShootSoundName;
+
+    [ReadOnly]
+    public AudioClip ShootSound;
+
+    public override void Init()
+    {
+        base.Init();
+
+        ShootSound = ResourceManager.Load<AudioClip>(ShootSoundName);
+    }
 }

@@ -29,13 +29,17 @@ public class LocalizationManager : MonoSingleton<LocalizationManager>
             _langeDatas.Add(data.LanguageName, data);
         }
 
-        if (_langeDatas.Count > 0)
-            _currLanguageData = _langeDatas.Values.ToArray()[0];
+        _currLanguageData = _langeDatas[GameDataManager.Instance.GetLanguageSetting().languageName];
     }
 
     public string[] GetAllLanguages()
     {
         return _langeDatas.Keys.ToArray();
+    }
+
+    public string GetCurrLanguageName()
+    {
+        return _currLanguageData.LanguageName;
     }
 
     public void SetLanguage(string languageName)
@@ -47,6 +51,7 @@ public class LocalizationManager : MonoSingleton<LocalizationManager>
         }
 
         _currLanguageData = _langeDatas[languageName];
+        GameDataManager.Instance.SetLanaguageSetting(new LanguageSetting {languageName = languageName});
         UpdateContents();
     }
 

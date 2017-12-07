@@ -8,6 +8,15 @@
     "Gold": "金币",
     "CanIntrude": "闯入者",
     "Exit": "退出游戏",
-    "ReStart": "重新开始"
+    "ReStart": "重新开始",
+    "GameSucceed": "游戏胜利！",
+    "GameFailure": "游戏失败！",
+    "Language": "语言",
+    "Setting": "设置",
+    "MainMenu": "主菜单",
+    "About": "关于",
+    "SelectLevel": "选择关卡",
+    "AboutContent": "这个游戏的作者是陈曦，喜欢的话给个Star。",
+    "Back": "返回"
   }
 }

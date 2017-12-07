@@ -14,10 +14,5 @@ public class UIWindow_GamePaused : UIWindow
         {
             GameController.Instance.ShutDown();
         });
-
-        GameController.Instance.OnGamePaused += p =>
-        {
-            gameObject.SetActive(p);
-        };
     }
 }

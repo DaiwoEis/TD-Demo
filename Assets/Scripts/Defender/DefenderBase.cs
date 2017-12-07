@@ -25,7 +25,7 @@ public abstract class DefenderBase : SerializedMonoBehaviour
 
     protected Enemy target;
 
-    protected void Awake()
+    protected virtual void Awake()
     {
         _configData = ConfigLoader.Load();
         _configData.Init();
@@ -71,8 +71,8 @@ public abstract class DefenderBase : SerializedMonoBehaviour
     }
 
     protected virtual void Firing()
-    {
-        audioSource.Play();
+    {       
+        audioSource.PlayOneShot(_configData.ShootSound);
     }
      
     protected Enemy SelectEnemy()
