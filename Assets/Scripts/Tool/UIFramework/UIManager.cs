@@ -20,6 +20,8 @@ public class UIManager : MonoSingleton<UIManager>
 
     private List<UIWindow> _currOpenedWindows;
 
+    public int CurrOpendedWindowCount { get { return _currOpenedWindows.Count; } }
+
     private Transform _canvasTrans;
 
     protected override void OnCreate()
@@ -27,8 +29,20 @@ public class UIManager : MonoSingleton<UIManager>
         base.OnCreate();
 
         _windowDic = new Dictionary<string, UIWindow>();
-        _canvasTrans = GameObject.FindWithTag("UICanvas").transform;
         _currOpenedWindows = new List<UIWindow>();
+
+        GetCanvas();
+        var canvas = _canvasTrans.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceCamera;
+        canvas.worldCamera = Camera.main;
+        canvas.planeDistance = 1f;
+    }
+
+    private void GetCanvas()
+    {
+        _canvasTrans = GameObject.FindWithTag("UICanvas").transform;
+        if (_canvasTrans == null)
+            _canvasTrans = Instantiate(ResourceManager.Load<GameObject>("UICanvas")).transform;
     }
 
     public void FindWindowInScene()
@@ -95,6 +109,24 @@ public class UIManager : MonoSingleton<UIManager>
         return windowType.RemoveNameSpace();
     }
 
+    public UIWindow GetWindow(Type type)
+    {
+        return GetWindow(GetWindowID(type));
+    }
+
+    public UIWindow GetWindow(string windowID)
+    {
+        if (_windowDic.ContainsKey(windowID))
+            return _windowDic[windowID];
+
+        var windowPrefab = ResourceManager.Load<GameObject>(windowID);
+        var window = Instantiate(windowPrefab, _canvasTrans).GetComponent<UIWindow>();     
+        window.gameObject.SetActive(false);
+        window.gameObject.name = window.gameObject.name.Replace("(Clone)", "").TrimEnd();
+        _windowDic.Add(windowID, window);
+        return window;
+    }
+
     private UIWindowSwitcher GetSwitcher(string windowID)
     {
         UIWindowSwitcher switcher;
@@ -122,18 +154,5 @@ public class UIManager : MonoSingleton<UIManager>
         yield return new WaitForSecondsRealtime(switcher.openingTime);
         window.TriggerOnOpeningCompleteEvent();
         _currOpenedWindows.Add(window);
-    }
-
-    public UIWindow GetWindow(string windowID)
-    {
-        if (_windowDic.ContainsKey(windowID))
-            return _windowDic[windowID];
-
-        var windowPrefab = ResourceManager.Load<GameObject>(windowID);
-        var window = Instantiate(windowPrefab, _canvasTrans).GetComponent<UIWindow>();     
-        window.gameObject.SetActive(false);
-        window.gameObject.name = window.gameObject.name.Replace("(Clone)", "").TrimEnd();
-        _windowDic.Add(windowID, window);
-        return window;
     }
 }

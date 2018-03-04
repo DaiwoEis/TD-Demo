@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using UnityEngine.EventSystems;
 
-public class UIWindow_GameInit : UIWindow 
+public class UIWindow_GameInit : UIWindow , IPointerClickHandler
 {
-    
-	
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        CloseSelf();
+    }
 }

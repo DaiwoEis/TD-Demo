@@ -72,7 +72,7 @@ public abstract class DefenderBase : SerializedMonoBehaviour
 
     protected virtual void Firing()
     {       
-        audioSource.PlayOneShot(_configData.ShootSound);
+        audioSource.Play(_configData.ShootSound);
     }
      
     protected Enemy SelectEnemy()

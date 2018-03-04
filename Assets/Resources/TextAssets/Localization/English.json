@@ -18,6 +18,14 @@
     "About": "About",
     "SelectLevel": "SelectLevel",
     "AboutContent": "This game in made by ChenXi.",
-    "Back": "Back"
+    "Back": "Back",
+    "Apply": "Apply",
+    "SpeackVolume": "SpeackVolume",
+    "FXVolume": "FXVolume",
+    "BGVolume": "BGVolume",
+    "BackMainMenu": "BackMainMenu",
+    "NextLevel": "NextLevel",
+    "GamePaused": "Game Paused",
+    "ClickScreen": "Click Screen To Start Game"
   }
 }

@@ -3,6 +3,8 @@
 	"WindowSwitcherMap" : {
 		"UIWindow_GameMain" : "Active",
 		"UIWindow_GamePaused" : "Fade",
-		"UIWindow_GameInit" : "Fade"
+		"UIWindow_GameInit" : "Fade",
+		"UIWindow_GameSucceed" : "Fade",
+		"UIWindow_GameFailure" : "Fade"
 	}
 }

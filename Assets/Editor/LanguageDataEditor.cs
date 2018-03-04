@@ -1,27 +1,56 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using Newtonsoft.Json;
+﻿using System.IO;
+using ExcelDataReader;
 using UnityEditor;
+using UnityEngine;
+using UnityEngine.UI;
 
-public class LanguageDataEditor : ScriptableWizard
+public static class LanguageDataEditor
 {
-    [MenuItem("Tools/LanguageHelper/UpdateCurrentSceneLanguageKey")]
-    public static void UpdateCurrentSceneLanguageKey()
+    [MenuItem("Tools/LanguageHelper/LoadLanguageIDs")]
+    public static void LoadLanguageIDs()
     {
-        var ofn = new OpenFileName("选择要更新的json文件");
-        if (LocalDialog.GetSaveFileName(ofn))
+        string path = LocalizationManager.dataPath;
+        using (var stream = File.Open(path, FileMode.Open, FileAccess.Read))
         {
-            LanguageData languageData = JsonConvert.DeserializeObject<LanguageData>(File.ReadAllText(ofn.file));
-            if(languageData.LanguageTextDic == null)
-                languageData.LanguageTextDic = new Dictionary<string, string>();
-            foreach (UIText uiText in FindObjectsOfType<UIText>())
+            using (var reader = ExcelReaderFactory.CreateOpenXmlReader(stream))
             {
-                string key = uiText.GetLanguageKey();
-                if (!languageData.LanguageTextDic.ContainsKey(key))
-                    languageData.LanguageTextDic.Add(key, "");
+                var result = reader.AsDataSet();
+
+                string content = "public enum EMultiLanguageContent\n";
+                content += "{\n";
+
+                for (int i = 1; i < result.Tables[0].Rows.Count; ++i)
+                {
+                    content += "\t" + result.Tables[0].Rows[i][0];
+                    if (i == result.Tables[0].Rows.Count - 1)
+                        content += "\n";
+                    else
+                        content += ",\n";
+                }
+                content += "}\n\n";
+
+                content += "public enum EMultiLanguageName\n";
+                content += "{\n";
+                var firstRow = result.Tables[0].Rows[0].ItemArray;
+                for (int i = 1; i < firstRow.Length; ++i)
+                {
+                    content += "\t" + firstRow[i] + ",\n";
+                }
+                content += "}\n";
+                string csharpPath = LocalizationManager.scirptPath;
+
+                File.WriteAllText(csharpPath, content);
+                AssetDatabase.Refresh();
             }
-            File.WriteAllText(ofn.file, JsonConvert.SerializeObject(languageData, Formatting.Indented), Encoding.UTF8);
         }
+    }
+
+    [MenuItem("GameObject/UI/MultiLanguageText")]
+    public static void CreateMultiLanguageText()
+    {
+        var go = new GameObject("MultiLanguageText_");
+        go.AddComponent<Text>();
+        go.AddComponent<MultiLanguageText>();
+        go.transform.SetParent(Selection.activeTransform);
     }
 }

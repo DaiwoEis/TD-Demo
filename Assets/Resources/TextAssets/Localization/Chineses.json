@@ -17,6 +17,15 @@
     "About": "关于",
     "SelectLevel": "选择关卡",
     "AboutContent": "这个游戏的作者是陈曦，喜欢的话给个Star。",
-    "Back": "返回"
+    "Back": "返回",
+    "Apply": "应用",
+    "SpeackVolume": "对话音量",
+    "FXVolume": "效果音量",
+    "BGVolume": "背景音乐音量",
+    "Restart": "重新开始",
+    "BackMainMenu": "返回主菜单",
+    "NextLevel": "下一关卡",
+    "GamePaused": "游戏暂停",
+    "ClickScreen": "点击屏幕开始游戏"
   }
 }

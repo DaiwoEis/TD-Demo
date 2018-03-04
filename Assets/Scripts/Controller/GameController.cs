@@ -3,6 +3,7 @@ using FSM;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameController : MonoSingleton<GameController>
 {
@@ -35,10 +36,14 @@ public class GameController : MonoSingleton<GameController>
 
     private FSM<GameStateType> _fsm;
 
+    public ISceneChangeEffect sceneChangeEffect;
+
     private void Start()
     {
         _spawner = FindObjectOfType<EnemySpawner>();
         enemyTotal = _spawner.EnemyTotal;
+
+        sceneChangeEffect = Camera.main.GetComponent<ISceneChangeEffect>();
 
         _fsm = new FSM<GameStateType>(this);
 
@@ -48,7 +53,17 @@ public class GameController : MonoSingleton<GameController>
         _fsm.AddState(new GameFailure(_fsm));
         _fsm.AddState(new GameSucceed(_fsm));
 
-        _fsm.ChangeState(GameStateType.GameInit);   
+        UIManager.Instance.GetWindow(typeof(UIWindow_GamePaused)).transform.FindChildComponentByName<Button>("Btn_Back")
+            .onClick.AddListener(
+                () =>
+                {
+                    _fsm.ChangeState(GameStateType.GameRunning);
+                });
+
+        if (sceneChangeEffect != null)
+            sceneChangeEffect.Run(false, () => _fsm.ChangeState(GameStateType.GameInit));
+        else
+            _fsm.ChangeState(GameStateType.GameInit);
     }
 
     private void Update()
@@ -121,18 +136,14 @@ public class GameController : MonoSingleton<GameController>
         {
             base.Enter();
 
-            Instance.Invoke(2f, () => _fsm.ChangeState(GameStateType.GameRunning));
             UIManager.Instance.SetConfigData(JsonConvert.DeserializeObject<UIManagerConfigData>(ResourceManager.Load<TextAsset>("GameMain").text));
             UIManager.Instance.FindWindowInScene();
             UIManager.Instance.OpenWindow<UIWindow_GameMain>();
             UIManager.Instance.OpenWindow<UIWindow_GameInit>();
-        }
-
-        public override void Exit()
-        {
-            base.Exit();
-
-            UIManager.Instance.CloseWindow<UIWindow_GameInit>();
+            UIManager.Instance.GetWindow(typeof(UIWindow_GameInit)).onClosingComplete += (w) =>
+            {
+                _fsm.ChangeState(GameStateType.GameRunning);
+            };
         }
     }
 
@@ -196,6 +207,7 @@ public class GameController : MonoSingleton<GameController>
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 _fsm.ChangeState(GameStateType.GameRunning);
+                UIManager.Instance.CloseWindow<UIWindow_GamePaused>();
             }
         }
 
@@ -204,8 +216,6 @@ public class GameController : MonoSingleton<GameController>
             base.Exit();
 
             Time.timeScale = 1f;
-
-            UIManager.Instance.CloseWindow<UIWindow_GamePaused>();
         }
     }
 

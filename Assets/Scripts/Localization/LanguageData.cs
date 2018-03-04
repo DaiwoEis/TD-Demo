@@ -8,10 +8,15 @@ public class LanguageData
     public string LanguageName;
 
     [ShowInInspector]
-    public Dictionary<string, string> LanguageTextDic;
+    public List<string> LanguageTexts;
 
-    public string this[string key]
+    public LanguageData()
+    {        
+        LanguageTexts = new List<string>();
+    }
+
+    public string this[EMultiLanguageContent id]
     {
-        get { return LanguageTextDic[key]; }
+        get { return LanguageTexts[(int)id]; }
     }
 }

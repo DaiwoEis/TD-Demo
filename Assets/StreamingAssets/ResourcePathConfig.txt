@@ -6,18 +6,20 @@ Soldier:Prefabs/Enemy/Soldier
 Tank:Prefabs/Enemy/Tank
 Explosion05:Prefabs/FX/Explosion05
 Btn_Language:Prefabs/UI/Control/Btn_Language
+UIWindow_About:Prefabs/UI/UIWindow/UIWindow_About
 UIWindow_GameFailure:Prefabs/UI/UIWindow/UIWindow_GameFailure
 UIWindow_GameInit:Prefabs/UI/UIWindow/UIWindow_GameInit
 UIWindow_GameMain:Prefabs/UI/UIWindow/UIWindow_GameMain
 UIWindow_GamePaused:Prefabs/UI/UIWindow/UIWindow_GamePaused
 UIWindow_GameSucceed:Prefabs/UI/UIWindow/UIWindow_GameSucceed
 UIWindow_MainMenu:Prefabs/UI/UIWindow/UIWindow_MainMenu
+UIWindow_Setting:Prefabs/UI/UIWindow/UIWindow_Setting
 
 [Texture2D]
 
 [AudioClip]
-AutomaticRifleFire:Sounds/AutomaticRifleFire
-RocketLauncherImpact:Sounds/RocketLauncherImpact
+FX_AutomaticRifleFire:Sounds/FX_AutomaticRifleFire
+FX_RocketLauncherImpact:Sounds/FX_RocketLauncherImpact
 
 [ScriptableObject]
 DefenderMachineGunData:ScriptableObjects/ConfigData/Denfender/DefenderMachineGunData

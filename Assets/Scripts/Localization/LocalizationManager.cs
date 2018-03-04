@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
+using ExcelDataReader;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -13,23 +14,58 @@ public class LocalizationManager : MonoSingleton<LocalizationManager>
 
     private LanguageData _currLanguageData;
 
-    private const string SettingName = "LocalizationSetting";
+    private const string _dataPath = "LanguageConfig.xlsx";
+
+    private const string _scirptPath = "Scripts/Localization/EMultiLanguageID.cs";
 
     public event Action<string> OnLanaguageChanged; 
+
+    public static string dataPath { get { return Application.streamingAssetsPath + "/" + _dataPath; } }
+
+    public static string scirptPath { get { return Application.dataPath + "/" + _scirptPath; } }
 
     protected override void OnCreate()
     {
         base.OnCreate();
-
-        _langeDatas = new Dictionary<string, LanguageData>();
-        LocalizationSetting setting = JsonConvert.DeserializeObject<LocalizationSetting>(ResourceManager.Load<TextAsset>(SettingName).text);
-        foreach (var resourcesName in setting.LanguageDataResourcesNames)
-        {
-            LanguageData data = JsonConvert.DeserializeObject<LanguageData>(ResourceManager.Load<TextAsset>(resourcesName).text);
-            _langeDatas.Add(data.LanguageName, data);
-        }
+  
+        LoadData();
 
         _currLanguageData = _langeDatas[GameDataManager.Instance.GetLanguageSetting().languageName];
+    }
+
+    public void LoadData()
+    {
+        _langeDatas = new Dictionary<string, LanguageData>();
+
+        string path = Application.streamingAssetsPath + "/LanguageConfig.xlsx";
+        using (var stream = File.Open(path, FileMode.Open, FileAccess.Read))
+        {
+            using (var reader = ExcelReaderFactory.CreateOpenXmlReader(stream))
+            {
+                var result = reader.AsDataSet();
+
+                var table = result.Tables[0];
+
+                var row0 = table.Rows[0].ItemArray;
+                for (int i = 1; i < row0.Length; ++i)
+                {
+                    var languageName = row0[i].ToString();
+                    var languageData = new LanguageData {LanguageName = languageName};
+                    _langeDatas.Add(languageName, languageData);                     
+                }
+
+                for (int i = 1; i < table.Rows.Count; ++i)
+                {
+                    var row = table.Rows[i];
+                    int col = 1;
+                    foreach (var languageName in _langeDatas.Keys)
+                    {
+                        _langeDatas[languageName].LanguageTexts.Add(row[col].ToString());
+                        col++;
+                    }
+                }
+            }
+        }
     }
 
     public string[] GetAllLanguages()
@@ -52,18 +88,18 @@ public class LocalizationManager : MonoSingleton<LocalizationManager>
 
         _currLanguageData = _langeDatas[languageName];
         GameDataManager.Instance.SetLanaguageSetting(new LanguageSetting {languageName = languageName});
-        UpdateContents();
+        UpdateTexts();
     }
 
-    public string GetContent(string key)
+    public string GetContent(EMultiLanguageContent id)
     {
         if (_currLanguageData != null)
-            return _currLanguageData[key];
+            return _currLanguageData[id];
 
         return null;
     }
 
-    private void UpdateContents()
+    private void UpdateTexts()
     {
         if (OnLanaguageChanged != null)
             OnLanaguageChanged(_currLanguageData.LanguageName);
@@ -72,12 +108,5 @@ public class LocalizationManager : MonoSingleton<LocalizationManager>
     private void ClearEvent()
     {
         OnLanaguageChanged = null;
-    }
-
-    public class LocalizationSetting
-    {
-        public int LanguageCount;
-
-        public string[] LanguageDataResourcesNames;
     }
 }
