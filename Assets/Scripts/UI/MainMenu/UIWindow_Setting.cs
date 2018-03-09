@@ -32,7 +32,7 @@ public class UIWindow_Setting : UIWindow
                 ReadSetting();
                 _dirty = false;
             }
-            CloseSelf();
+            UIManager.Instance.BackToLastWindow();
         });
    
         transform.FindChildComponentByName<Button>("Btn_Apply").onClick.AddListener(SaveSetting);

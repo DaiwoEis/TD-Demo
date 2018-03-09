@@ -7,7 +7,7 @@ public class UIWindow_About : UIWindow
     {
         transform.FindChildComponentByName<Button>("Btn_Back").onClick.AddListener(() =>
         {
-            CloseSelf();
+            UIManager.Instance.BackToLastWindow();
         });
     }
 }

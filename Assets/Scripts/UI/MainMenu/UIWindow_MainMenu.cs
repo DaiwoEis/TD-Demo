@@ -9,13 +9,13 @@ public class UIWindow_MainMenu : UIWindow
             CSceneManager.LoadScene("MainScene");
         });
 
-        transform.FindChildComponentByName<Button>("Btn_Setting").onClick.AddListener(OpenWindowAndPauseSelf<UIWindow_Setting>);
+        transform.FindChildComponentByName<Button>("Btn_Setting").onClick
+            .AddListener(() => UIManager.Instance.OpenWindow(UIWindowID.Setting));
 
-        transform.FindChildComponentByName<Button>("Btn_About").onClick.AddListener(OpenWindowAndPauseSelf<UIWindow_About>);
+        transform.FindChildComponentByName<Button>("Btn_About").onClick
+            .AddListener(() => UIManager.Instance.OpenWindow(UIWindowID.About));
 
-        transform.FindChildComponentByName<Button>("Btn_Exit").onClick.AddListener(() =>
-        {
-            GameManager.Instance.QuitGame();
-        });
+        transform.FindChildComponentByName<Button>("Btn_Exit").onClick
+            .AddListener(() => GameManager.Instance.QuitGame());
     }
 }

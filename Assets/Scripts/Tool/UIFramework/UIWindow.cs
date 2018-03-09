@@ -9,35 +9,9 @@ public class UIWindow : MonoBehaviour
     public event Action<UIWindow> onClosingStart;
     public event Action<UIWindow> onClosingComplete;
 
-    public string ID { get { return WindowID(GetType()); } }
+    public string ID;
 
-    public string WindowID(Type type)
-    {
-        return UIManager.Instance.GetWindowID(type);
-    }
-
-    protected void OpenWindow<T>() where T : UIWindow
-    {
-        UIManager.Instance.OpenWindow(WindowID(typeof(T)));
-    }
-
-    protected void OpenWindowAndPauseSelf<T>() where T : UIWindow
-    {
-        UIManager.Instance.CloseWindow(ID);
-        UIManager.Instance.GetWindow(WindowID(typeof(T))).onClosingStart += OnResume;
-        UIManager.Instance.OpenWindow(WindowID(typeof(T)));
-    }
-
-    private void OnResume(UIWindow closingWindow)
-    {
-        closingWindow.onClosingStart -= OnResume;
-        UIManager.Instance.OpenWindow(ID);
-    }
-
-    protected void CloseSelf()
-    {
-        UIManager.Instance.CloseWindow(ID);
-    }
+    public UIWindowSwitcher swicher;
 
     public void TriggerOnOpeningStartEvent()
     {

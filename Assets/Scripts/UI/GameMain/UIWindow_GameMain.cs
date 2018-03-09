@@ -26,6 +26,18 @@ public class UIWindow_GameMain : UIWindow
 
         _buyDefender = transform.FindChildComponentByName<UIBuyDefender>("BuyDefender");
         _defenderSetting = transform.FindChildComponentByName<UISettingDefender>("DefenderSetting");
+
+        transform.FindChildByName("Panel").gameObject.SetActive(false);
+
+        GameController.Instance.onFadeInSceneComplete +=
+            () => transform.FindChildByName("Panel").gameObject.SetActive(true);
+
+        transform.FindChildComponentByName<UIWidget>("Panel").OnClick += (w, d) =>
+        {
+            GameController.Instance.ChangeState(GameController.GameStateType.GameRunning);
+            w.gameObject.SetActive(false);
+        };
+
     }
 
     private void Update()

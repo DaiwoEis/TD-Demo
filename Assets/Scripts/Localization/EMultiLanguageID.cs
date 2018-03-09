@@ -19,6 +19,8 @@ public enum EMultiLanguageContent
 	MachineGunDefender,
 	MainMenu,
 	NextLevel,
+	Null,
+	PressKeyToStart,
 	ReStart,
 	RocketDefender,
 	Sale,

@@ -4,6 +4,6 @@ public class UIWindow_GameInit : UIWindow , IPointerClickHandler
 {
     public void OnPointerClick(PointerEventData eventData)
     {
-        CloseSelf();
+        UIManager.Instance.BackToLastWindow();
     }
 }

@@ -1,26 +1,18 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class UIManagerConfigData
-{
-    public Dictionary<string, string> WindowSwitcherMap;
-
-    public string DefaultSwitcherName;
-}
 
 public class UIManager : MonoSingleton<UIManager>
 {
     private Dictionary<string, UIWindow> _windowDic;
 
-    private Dictionary<string, UIWindowSwitcher> _windowSwitcherMap;
+    private Dictionary<string, UIDialog> _dialogDic;
 
-    private UIWindowSwitcher _defaultSwither;
+    private Stack<UIWindow> _windowStack;
 
-    private List<UIWindow> _currOpenedWindows;
+    private List<UIDialog> _dialogs;
 
-    public int CurrOpendedWindowCount { get { return _currOpenedWindows.Count; } }
+    private UIWindow _globalWindow;
 
     private Transform _canvasTrans;
 
@@ -29,8 +21,10 @@ public class UIManager : MonoSingleton<UIManager>
         base.OnCreate();
 
         _windowDic = new Dictionary<string, UIWindow>();
-        _currOpenedWindows = new List<UIWindow>();
-
+        _windowStack = new Stack<UIWindow>();
+        _dialogDic = new Dictionary<string, UIDialog>();
+        _dialogs = new List<UIDialog>();
+ 
         GetCanvas();
         var canvas = _canvasTrans.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceCamera;
@@ -59,61 +53,64 @@ public class UIManager : MonoSingleton<UIManager>
         }
     }
 
-    public void SetConfigData(UIManagerConfigData data)
+    public void OpenGloablWindow(string windowID)
     {
-        if (data.WindowSwitcherMap != null)
-        {
-            _windowSwitcherMap = new Dictionary<string, UIWindowSwitcher>(data.WindowSwitcherMap.Count);
-            foreach (var pair in data.WindowSwitcherMap)
-                _windowSwitcherMap.Add(pair.Key, ResourceManager.Load<UIWindowSwitcher>(pair.Value));
-        }
-        else
-        {
-            _windowSwitcherMap = new Dictionary<string, UIWindowSwitcher>();
-        }
-
-        _defaultSwither = ResourceManager.Load<UIWindowSwitcher>(data.DefaultSwitcherName);
+        _globalWindow = GetWindow(windowID);
+        StartCoroutine(_OpenWindowInternal(_globalWindow, _globalWindow.swicher));
     }
 
     public void OpenWindow(string windowID)
-    {
-        StartCoroutine(_OpenWindowInternal(GetWindow(windowID), GetSwitcher(windowID)));
-    }
-
-    public void CloseWindow(string windowID)
-    {
-        StartCoroutine(_CloseWindowInternal(GetWindow(windowID), GetSwitcher(windowID)));
-    }
-
-    public void OpenWindow<T>() where T : UIWindow
     {       
-        OpenWindow(GetWindowID(typeof(T)));
+        var nextWindow = GetWindow(windowID);
+        StartCoroutine(_OpenWindow(nextWindow));
     }
 
-    public void CloseWindow<T>() where T : UIWindow
+    public void BackToLastWindow()
     {
-        CloseWindow(GetWindowID(typeof(T)));
-    }
-
-    public void CloseAllOpenedWindow()
-    {
-        foreach (var currOpenedWindow in _currOpenedWindows)
+        if (_windowStack.Count > 0)
         {
-            string windowID = currOpenedWindow.ID;
-            CloseWindow(windowID);
+            StartCoroutine(_BackToLastWindow());
+        }
+        else
+        {
+            Debug.LogWarning("window count must > 0 in window stack can back to last window!");
         }
     }
 
-    public string GetWindowID(Type windowType)
+    public void OpenDialog(string dialogID)
     {
-        return windowType.RemoveNameSpace();
+        var dialog = GetDialog(dialogID);
+        dialog.gameObject.SetActive(true);
+        dialog.Enter();
+        _dialogs.Add(dialog);
     }
 
-    public UIWindow GetWindow(Type type)
+    public void CloseDialog(string dialogID)
     {
-        return GetWindow(GetWindowID(type));
+        var dialog = _dialogs.Find(d => d.ID == dialogID);
+        if (dialog != null)
+        {
+            dialog.gameObject.SetActive(false);
+            dialog.Exit();
+            _dialogs.Remove(dialog);
+        }
+        else
+        {
+            Debug.Log("the dialog " + dialogID + " is not opened.");
+        }
     }
 
+    public void CloseAllDialog()
+    {
+        foreach (var dialog in _dialogs)
+        {
+            dialog.gameObject.SetActive(false);
+            dialog.Exit();
+        }
+
+        _dialogs.Clear();        
+    }
+    
     public UIWindow GetWindow(string windowID)
     {
         if (_windowDic.ContainsKey(windowID))
@@ -127,13 +124,42 @@ public class UIManager : MonoSingleton<UIManager>
         return window;
     }
 
-    private UIWindowSwitcher GetSwitcher(string windowID)
+    public UIDialog GetDialog(string dialogID)
     {
-        UIWindowSwitcher switcher;
-        if (_windowSwitcherMap.TryGetValue(windowID, out switcher))
-            return switcher;
+        if (_dialogDic.ContainsKey(dialogID))
+            return _dialogDic[dialogID];
 
-        return _defaultSwither;
+        var windowPrefab = ResourceManager.Load<GameObject>(dialogID);
+        var dialog = Instantiate(windowPrefab, _canvasTrans).GetComponent<UIDialog>();
+        dialog.gameObject.SetActive(false);
+        dialog.gameObject.name = dialog.gameObject.name.Replace("(Clone)", "").TrimEnd();
+        _dialogDic.Add(dialogID, dialog);
+        return dialog;
+    }
+
+    private IEnumerator _OpenWindow(UIWindow nextWindow)
+    {
+        if (_windowStack.Count != 0)
+        {
+            UIWindow lastWindow = _windowStack.Peek();
+            if (lastWindow != null)
+                yield return StartCoroutine(_CloseWindowInternal(lastWindow, lastWindow.swicher));
+        }         
+        yield return StartCoroutine(_OpenWindowInternal(nextWindow, nextWindow.swicher));
+        _windowStack.Push(nextWindow);
+    }
+
+    private IEnumerator _BackToLastWindow()
+    {
+        UIWindow lastWindow = _windowStack.Pop();
+        if (lastWindow != null)
+            yield return _CloseWindowInternal(lastWindow, lastWindow.swicher);
+
+        if (_windowStack.Count > 0)
+        {
+            UIWindow nextWindow = _windowStack.Peek();
+            yield return _OpenWindowInternal(nextWindow, nextWindow.swicher);
+        }
     }
 
     private IEnumerator _CloseWindowInternal(UIWindow window, UIWindowSwitcher switcher)
@@ -143,7 +169,6 @@ public class UIManager : MonoSingleton<UIManager>
         yield return new WaitForSecondsRealtime(switcher.closingTime);
         window.TriggerOnClosingCompleteEvent();
         window.gameObject.SetActive(false);
-        _currOpenedWindows.Remove(window);
     }
 
     private IEnumerator _OpenWindowInternal(UIWindow window, UIWindowSwitcher switcher)
@@ -153,6 +178,5 @@ public class UIManager : MonoSingleton<UIManager>
         switcher.OnOpen(window);
         yield return new WaitForSecondsRealtime(switcher.openingTime);
         window.TriggerOnOpeningCompleteEvent();
-        _currOpenedWindows.Add(window);
     }
 }

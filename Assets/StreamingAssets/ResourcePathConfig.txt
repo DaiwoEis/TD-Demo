@@ -6,6 +6,7 @@ Soldier:Prefabs/Enemy/Soldier
 Tank:Prefabs/Enemy/Tank
 Explosion05:Prefabs/FX/Explosion05
 Btn_Language:Prefabs/UI/Control/Btn_Language
+UICanvas:Prefabs/UI/UICanvas
 UIWindow_About:Prefabs/UI/UIWindow/UIWindow_About
 UIWindow_GameFailure:Prefabs/UI/UIWindow/UIWindow_GameFailure
 UIWindow_GameInit:Prefabs/UI/UIWindow/UIWindow_GameInit
@@ -27,6 +28,7 @@ DefenderRocketData:ScriptableObjects/ConfigData/Denfender/DefenderRocketData
 EnemySpawnerData1:ScriptableObjects/ConfigData/Enemy/EnemySpawnerData1
 SoldierData:ScriptableObjects/ConfigData/Enemy/SoldierData
 TankData:ScriptableObjects/ConfigData/Enemy/TankData
+DissolveEffect1:ScriptableObjects/ConfigData/SceneChangeEffect/DissolveEffect1
 Active:ScriptableObjects/UI/Switcher/Active
 Fade:ScriptableObjects/UI/Switcher/Fade
 
